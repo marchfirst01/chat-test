@@ -8,7 +8,7 @@ import Messages from '../components/messages/Messages';
 import Input from '../components/input/Input';
 import TextContainer from '../components/textContainer/TextContainer';
 
-const ENDPOINT = 'http://localhost:8000';
+const ENDPOINT = 'http://localhost:8080';
 
 let socket;
 
@@ -47,7 +47,7 @@ const Chat = ({ location }) => {
     });
 
     socket.on('roomData', ({ users }) => {
-      console.log("roomData", users);
+      console.log('roomData', users);
       setUsers(users);
     });
   }, []);
