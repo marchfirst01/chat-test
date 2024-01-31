@@ -1,19 +1,32 @@
 import moment from 'moment-timezone';
 
-export const createRoomResponseDTO = (result) => {
+export const createRoomResponseDTO = (data, status) => {
 
     return {
-        "roonId": result.id,
-        "roomIdentifier": result.identifier,
-        "roomType": result.type,
-        "roomName": result.roomName,
-        "not_read_chat": result.not_read_chat,
-        "last_read_chat_id": result.last_read_chat_id,
-        "updatedAt": moment.utc(result.updated_at).tz("Asia/Seoul").format('YYYY-MM-DD HH:mm:ss')
+        "roomId": data.cr_id,
+        "roomName": data.cr_name,
+        "roomStatus": data.cr_status,
+        "buyerId": data.cr_buyer_id,
+        "sellerId": data.cr_seller_id,
+        "productId": data.cr_product_id,
+        "latestMsg": data.cr_latest_msg,
+        "latestMsgData": moment.utc(data.cr_latest_msg_date).tz("Asia/Seoul").format('YYYY-MM-DD HH:mm:ss'),
+        "createdAt": moment.utc(data.created_at).tz("Asia/Seoul").format('YYYY-MM-DD HH:mm:ss'),
+        "isAlreadyExist": status
     };
 }
 
-export const addNewMessageResponseDTO = (result) => {
+export const getChatResponseDTO = (data) => {
 
-    return {"inserId": result};
+    return {"null":"null"};
+}
+
+export const readChatResponseDTO = (data) => {
+
+    return {"null":"null"};
+}
+
+export const getChatLogResponseDTO = (data) => {
+
+    return {"null":"null"};
 }
