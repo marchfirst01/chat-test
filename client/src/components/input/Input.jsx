@@ -1,21 +1,32 @@
-import React from 'react';
+import React from "react";
+import { IoIosAdd, IoMdSend } from "react-icons/io";
 
-import './Input.css';
+import * as I from "./Input.style.js";
 
 const Input = ({ setMessage, sendMessage, message }) => (
-  <form className='form'>
-    <input
-      className='input'
-      type='text'
-      placeholder='전송하려는 메시지를 입력하세요.'
-      value={message}
-      onChange={({ target: { value } }) => setMessage(value)}
-      onKeyPress={event => (event.key === 'Enter' ? sendMessage(event) : null)}
+  <I.FormWrapper>
+    <I.InputWrapper>
+      <IoIosAdd size={24} />
+      <I.InputBox
+        className="input"
+        type="text"
+        placeholder="메세지를 입력하세요."
+        value={message}
+        onChange={({ target: { value } }) => setMessage(value)}
+        onKeyPress={(event) =>
+          event.key === "Enter" ? (sendMessage(event), setMessage("")) : null
+        }
+      />
+    </I.InputWrapper>
+    <IoMdSend
+      size={24}
+      color="#4812a3"
+      onClick={(e) => {
+        sendMessage(e);
+        setMessage("");
+      }}
     />
-    <button className='sendButton' onClick={e => sendMessage(e)}>
-      전송
-    </button>
-  </form>
+  </I.FormWrapper>
 );
 
 export default Input;

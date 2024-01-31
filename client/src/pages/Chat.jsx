@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import queryString from 'query-string';
-import io from 'socket.io-client';
+import React, { useState, useEffect } from "react";
+import queryString from "query-string";
+import io from "socket.io-client";
+import * as C from "./Chat.style.js";
+import InfoBar from "../components/infoBar/InfoBar";
+import Messages from "../components/messages/Messages";
+import Input from "../components/input/Input";
 
-import './Chat.css';
-import InfoBar from '../components/infoBar/InfoBar';
-import Messages from '../components/messages/Messages';
-import Input from '../components/input/Input';
-import TextContainer from '../components/textContainer/TextContainer';
-
-const ENDPOINT = 'http://localhost:8080';
+const ENDPOINT = "http://localhost:8080";
 
 let socket;
 
 const Chat = ({ location }) => {
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
-  const [users, setUsers] = useState('');
-  const [message, setMessage] = useState('');
+  const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
+  const [users, setUsers] = useState("");
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -34,7 +32,7 @@ const Chat = ({ location }) => {
     setRoom(room);
     setName(name);
 
-    socket.emit('join', { name, room }, error => {
+    socket.emit("join", { name, room }, (error) => {
       if (error) {
         alert(error);
       }
@@ -42,29 +40,29 @@ const Chat = ({ location }) => {
   }, [ENDPOINT, window.location.search]);
 
   useEffect(() => {
-    socket.on('message', message => {
-      setMessages(messages => [...messages, message]);
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
     });
 
-    socket.on('roomData', ({ users }) => {
-      console.log('roomData', users);
+    socket.on("roomData", ({ users }) => {
+      console.log("roomData", users);
       setUsers(users);
     });
   }, []);
 
-  const sendMessage = event => {
+  const sendMessage = (event) => {
     event.preventDefault();
 
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit('sendMessage', message, () => setMessage(''));
+      socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
 
   return (
-    <div className='outerContainer'>
-      <div className='container'>
+    <C.OuterContainer>
+      <C.Container>
         <InfoBar room={room} />
         <Messages messages={messages} name={name} />
         <Input
@@ -72,9 +70,8 @@ const Chat = ({ location }) => {
           setMessage={setMessage}
           sendMessage={sendMessage}
         />
-      </div>
-      <TextContainer users={users} />
-    </div>
+      </C.Container>
+    </C.OuterContainer>
   );
 };
 

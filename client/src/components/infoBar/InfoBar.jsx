@@ -1,23 +1,21 @@
-import React from 'react';
-
-import onlineIcon from '../../assets/icon/onlineIcon.png';
-import closeIcon from '../../assets/icon/closeIcon.png';
-
-import './InfoBar.css';
+import React from "react";
+import * as I from "./InfoBar.style.js";
+import { AiOutlineArrowLeft, AiOutlineAlert } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 function InfoBar() {
   return (
-    <div className='infoBar'>
-      <div className='leftInnerContainer'>
-        <img className='onlineIcon' src={onlineIcon} alt='online icon' />
-        <h3>room</h3>
-      </div>
-      <div className='rightInnerContainer'>
-        <a href='/'>
-          <img src={closeIcon} alt='close icon' />
-        </a>
-      </div>
-    </div>
+    <I.Wrapper>
+      <I.Container>
+        <Link href="/">
+          <AiOutlineArrowLeft size={16} />
+        </Link>
+        <I.Name>작가명</I.Name>
+      </I.Container>
+      <I.Container>
+        <AiOutlineAlert size={24} />
+      </I.Container>
+    </I.Wrapper>
   );
 }
 
