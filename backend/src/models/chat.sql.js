@@ -7,7 +7,7 @@ export const insertChatRoomSql = 'insert into chat_room ' +
 export const getChatRoomToIDsSql = 'select * from chat_room where cr_product_id = ? and cr_seller_id = ? and cr_buyer_id = ?'
 export const getChatRoomToRIDSql = 'select * from chat_room where cr_id = ?';
 
-export const addMessageSql = 'insert into chat_message (cm_room_id, cm_sender_id, cm_receiver_id, cm_content) values (?, ?, ?, ?);';
+export const addMessageSql = 'insert into chat_message (cm_room_id, cm_sender_id, cm_receiver_id, cm_content, cm_is_media) values (?, ?, ?, ?, ?);';
 export const getMessageToIdSql = 'select * from chat_message where cm_id = ?';
 
 export const insertParticipantSql = "insert into participant (user_id, room_id, room_name) values (?, ?, ?);";

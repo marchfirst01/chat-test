@@ -6,7 +6,7 @@ import InfoBar from "../components/infoBar/InfoBar";
 import Messages from "../components/messages/Messages";
 import Input from "../components/input/Input";
 
-const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "http://localhost:8080/";
 
 let socket;
 
@@ -16,6 +16,7 @@ const Chat = ({ location }) => {
   const [users, setUsers] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
+
 
   useEffect(() => {
     // 여기선 name과 room을 url에서 가져온다.
@@ -32,7 +33,7 @@ const Chat = ({ location }) => {
     setRoom(room);
     setName(name);
 
-    socket.emit("join", { name, room }, (error) => {
+    socket.emit("connect-room", { rid: room, uid: name }, (error) => {
       if (error) {
         alert(error);
       }
@@ -40,7 +41,9 @@ const Chat = ({ location }) => {
   }, [ENDPOINT, window.location.search]);
 
   useEffect(() => {
-    socket.on("message", (message) => {
+
+    socket.on("received-message", (message) => {
+      console.log("rc", message);
       setMessages((messages) => [...messages, message]);
     });
 
@@ -48,6 +51,7 @@ const Chat = ({ location }) => {
       console.log("roomData", users);
       setUsers(users);
     });
+
   }, []);
 
   const sendMessage = (event) => {
@@ -56,7 +60,12 @@ const Chat = ({ location }) => {
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit("sendMessage", message, () => setMessage(""));
+      socket.emit("send-message", {
+        roomId: 1,
+        senderId: 1,
+        receiverId: 2,
+        content: message
+      }, () => setMessage(""));
     }
   };
 

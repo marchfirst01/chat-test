@@ -69,11 +69,11 @@ export const getChatRoomToRIdDao = async (roomId) => {
     }
 }
 
-export const addMessageDao = async (roomId, senderId, receiverId, content) => {
+export const addMessageDao = async (roomId, senderId, receiverId, content, isMedia) => {
     try{
         const conn = await pool.getConnection();
 
-        const [addMessage] = await pool.query(addMessageSql, [roomId, senderId, receiverId, content]);
+        const [addMessage] = await pool.query(addMessageSql, [roomId, senderId, receiverId, content, isMedia]);
         const [result] = await pool.query(getMessageToIdSql, addMessage.insertId);
 
         conn.release();

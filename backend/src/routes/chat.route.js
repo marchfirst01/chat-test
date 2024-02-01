@@ -23,8 +23,7 @@ export const chatRouter = (io) => {
 
     io.on("connection", (socket) => {
         logger.info(`User connected`);
-        
-        // 소켓 연결
+        // 소켓 연결 (join)
         socket.on('connect-room', (info) => asyncHandler(connectRoom(info, socket, io)));
         // 메시지 전송 시 실행
         socket.on('send-message', (message) => asyncHandler(sendMessageController(message, socket, io)));

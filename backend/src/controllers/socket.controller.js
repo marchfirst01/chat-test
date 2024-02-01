@@ -4,14 +4,16 @@ import { readMessageService, sendMessageService } from "../services/socket.servi
 
 export const connectRoom = (info, socket, io) => {
     // 채팅방 접속을 위한 컨트롤러
-    socket.join(info.userId);
+    socket.join(info.rid);
 }
 
 export const sendMessageController = async (message, socket, io) => {
     // 메시지 전달을 위한 컨트롤러
-    const result = sendMessageService(message);
-    
-    
+
+    const { roomId } = message;
+    const result = await sendMessageService(message);
+
+    if (result) io.to(roomId.toString()).emit('received-message', {result: result});
 }
 
 export const readMessageController = async (info, socket, io) => {

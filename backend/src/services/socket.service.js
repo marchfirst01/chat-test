@@ -3,11 +3,9 @@ import { addMessageDao } from "../models/chat.dao.js";
 
 export const sendMessageService = async (message) => {
 
-    const {roomId, senderId, receiverId, content} = message;
+    const {roomId, senderId, receiverId, content, isMedia = 0 } = message;
 
-    const result = await addMessageDao(roomId, senderId, receiverId, content);
-
-    console.log(result);
+    const result = await addMessageDao(roomId, senderId, receiverId, content, isMedia);
 
     return sendMessageResponseDTO(result);
     // return readChatResponseDTO(await readChatDao());
