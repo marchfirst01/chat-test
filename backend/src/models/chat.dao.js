@@ -5,14 +5,61 @@ import { pool } from "../../config/db.connect.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { findRoomToIdentifier, getChatRoomToUserIdSql, insertChatRoom, insertNewMessageSql, insertParticipantSql } from "./chat.sql.js";
+import { addMessageSql, getChatRoomToIDsSql, getChatRoomToRIDSql, getChatRoomToUserIdSql, getMessageToIdSql, insertChatRoomSql, insertNewMessageSql, insertParticipantSql, isRoomExistSql } from "./chat.sql.js";
 
-export const findChatRoom = async (identifier, userId) => {
+// 채팅방 찾기
+export const findChatRoom = async (buyerId, sellerId, productId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [chatRoom] = await pool.query(findRoomToIdentifier, [identifier, userId]);
+        const [chatRoom] = await pool.query(isRoomExistSql, [productId, sellerId, buyerId]);
+        
+        conn.release();
+        return chatRoom;
+    }catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
 
+// 새로운 채팅방 생성하기
+export const createChatRoomDao = async (buyerId, sellerId, productId, roomName) => {
+    try{
+        const conn = await pool.getConnection();
+        
+        const [chatRoom] = await pool.query(insertChatRoomSql, [roomName, buyerId, sellerId, productId]);
+        conn.release();
+        return chatRoom.insertId;
+
+    }catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// buyerId, sellerId, productId 통해 채팅방 정보 불러오기
+export const getChatRoomToIDsDao = async (buyerId, sellerId, productId) => {
+    try{
+        const conn = await pool.getConnection();
+        
+        const [chatRoom] = await pool.query(getChatRoomToIDsSql, [productId, sellerId, buyerId]);
+        conn.release();
+
+        return chatRoom[0];
+
+    }catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+// roomId 통해 채팅방 정보 불러오기
+export const getChatRoomToRIdDao = async (roomId) => {
+    try{
+        const conn = await pool.getConnection();
+        
+        const [chatRoom] = await pool.query(getChatRoomToRIDSql, roomId);
+        
         conn.release();
         return chatRoom[0];
 
@@ -22,19 +69,23 @@ export const findChatRoom = async (identifier, userId) => {
     }
 }
 
-export const createChatRoomDao = async (identifier, type, lastChat) => {
+export const addMessageDao = async (roomId, senderId, receiverId, content) => {
     try{
         const conn = await pool.getConnection();
-        
-        const [chatRoom] = await pool.query(insertChatRoom, [identifier, type, lastChat]);
+
+        const [addMessage] = await pool.query(addMessageSql, [roomId, senderId, receiverId, content]);
+        const [result] = await pool.query(getMessageToIdSql, addMessage.insertId);
+
         conn.release();
-        return chatRoom.insertId;
+        return result[0];
 
     }catch (err) {
         console.error(err);
         throw new BaseError(status.PARAMETER_IS_WRONG);
     }
+
 }
+
 
 export const addParticipantDao = async (roomId, roomName, participant) => {
     try{
