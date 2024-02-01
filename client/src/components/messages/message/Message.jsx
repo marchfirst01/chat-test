@@ -1,8 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import './Message.css';
-
-import ReactEmoji from 'react-emoji';
+import * as M from "./Message.style.js";
+import ReactEmoji from "react-emoji";
 
 function Message({ message: { user, text }, name }) {
   let isSentByCurrentUser = false;
@@ -13,20 +12,20 @@ function Message({ message: { user, text }, name }) {
     isSentByCurrentUser = true;
   }
 
-  return isSentByCurrentUser ? (
-    <div className='messageContainer justifyEnd'>
-      <p className='sentText pr-10'>{trimmedName}</p>
-      <div className='messageBox backgroundBlue'>
-        <p className='messageText colorWhite'>{ReactEmoji.emojify(text)}</p>
-      </div>
-    </div>
-  ) : (
-    <div className='messageContainer justifyStart'>
-      <div className='messageBox backgroundLight'>
-        <p className='messageText colorDark'>{ReactEmoji.emojify(text)}</p>
-      </div>
-      <p className='sentText pl-10 '>{user}</p>
-    </div>
+  return (
+    <>
+      {isSentByCurrentUser ? (
+        <M.MessageWrapper right>
+          <M.Time>오후 4:31</M.Time>
+          <M.MessageBox right>{ReactEmoji.emojify(text)}</M.MessageBox>
+        </M.MessageWrapper>
+      ) : (
+        <M.MessageWrapper>
+          <M.MessageBox>{ReactEmoji.emojify(text)}</M.MessageBox>
+          <M.Time>오후 4:31</M.Time>
+        </M.MessageWrapper>
+      )}
+    </>
   );
 }
 
