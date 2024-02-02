@@ -27,8 +27,6 @@ const Chat = ({ location }) => {
     // url에서 가져오는 방법이 아닌 다른 방법으로 name과 room을 가져오려면
     // 미리 정해진 방법으로 name과 room을 가져오는 것이 아닌
     // socket.emit('join')이 실행되기 전에 setRoom과 setName이 실행되도록 해야 한다.
-    console.log(chatInfo, user);
-
     socket = io(ENDPOINT);
 
     const newRoom = chatInfo.roomId;
