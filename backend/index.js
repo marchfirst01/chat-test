@@ -13,10 +13,7 @@ import { status } from './config/response.status.js';
 import { healthRoute } from './src/routes/health.route.js';
 import { chatRouter } from './src/routes/chat.route.js';
 
-import { addUser, removeUser, getUser, getUsersInRoom } from './users.js';
-
 import logger from './config/logger.js';
-import { socketJoin } from './src/middleware/socket.js';
 
 dotenv.config(); // .env 파일 사용 (환경 변수 관리)
 
@@ -65,69 +62,6 @@ app.use((err, req, res, next) => {
     .status(err.data.status || status.INTERNAL_SERVER_ERROR)
     .send(response(err.data));
 });
-
-// socket
-// io.use((socket, next) => {
-
-//     socket.onAny((event) => {
-//         if(event == "join"){
-//             console.log("JOIN EVENT OCCUR");
-//         }
-//     } )
-
-//     setTimeout(() => {
-//       // next is called after the client disconnection
-//       next();
-//     }, 1000);
-
-//     socket.on("join", () => {
-//         // not triggered
-//       });
-
-//     socket.on("disconnect", () => {
-//       // not triggered
-//     });
-// });
-
-// io.on('connection', socket => {
-//   // 소켓 연결 시작!
-//   // 우리 프로젝트에 필요한 이벤트 -> 방 생성(join), join 시
-//   logger.info(`User connected`);
-
-//   socket.onAny(event => {
-//     console.log('Socket Event: ', event);
-//     console.log(socket);
-//   });
-
-//   socket.on('join', ({ name, room }, callback) => {
-//     socketJoin(socket, io, { name, room }, callback); // 이렇게 따로 빼기 가능!!! 간결하게 사용 가능할 듯
-//   });
-
-//   socket.on('sendMessage', (message, callback) => {
-//     // message 전달 -> 채팅 작성 내용 전달, socketID로 user 찾으면 될 듯 -> DB 사용해서 한 번 수정해보겠음
-//     const user = getUser(socket.id);
-//     io.to(user.room).emit('message', {
-//       user: user.name,
-//       text: message,
-//     });
-//   });
-
-//   socket.on('disconnect', () => {
-//     // 연결 끊긴 이벤트 발생 시 작동
-//     logger.info(`User disconnected`);
-//     const user = getUser(socket.id);
-//     if (user) {
-//       io.to(user.room).emit('message', {
-//         user: 'admin',
-//         text: `${user.name}님이 퇴장하셨습니다.`,
-//       });
-//       io.to(user.room).emit('roomData', {
-//         room: user.room,
-//         users: getUsersInRoom(user.room),
-//       });
-//     }
-//   });
-// });
 
 server.listen(app.get('port'), () => {
     logger.info(`Server listening on port ${app.get('port')}`);
