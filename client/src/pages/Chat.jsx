@@ -47,7 +47,7 @@ const Chat = ({ location }) => {
       setMessages((messages) => [...messages, message]);
     });
 
-    socket.on("received-message", (message) => {
+    socket.on("read-message", (message) => {
       console.log("rM", message);
       setMessages((messages) => [...messages, message]);
     });
@@ -65,11 +65,10 @@ const Chat = ({ location }) => {
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit("send-message", {
+      socket.emit("read-message", {
         roomId: 1,
         senderId: 1,
         receiverId: 2,
-        content: message
       }, () => setMessage(""));
     }
   };

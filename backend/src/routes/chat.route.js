@@ -13,7 +13,7 @@ export const chatRouter = (io) => {
     // 채팅방 리스트 가져오기
     router.post('/list', asyncHandler(getChatController));
     // 채팅방 채팅 로그 요청(이전까지 채팅했던 내역 요청)
-    router.post('/log', asyncHandler(getChatLogController));
+    router.post('/chat-log', asyncHandler(getChatLogController));
 
     io.on("connection", (socket) => {
         logger.info(`User connected`);

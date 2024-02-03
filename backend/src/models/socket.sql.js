@@ -13,4 +13,4 @@ export const addMessageSql = 'insert into chat_message (cm_room_id, cm_sender_id
 export const getMessageToIdSql = 'select * from chat_message where cm_id = ?';
 export const updateRoomLastMsgSql = 'update chat_room set cr_latest_msg = ?, cr_latest_msg_date = ?, updated_at = CURRENT_TIMESTAMP where cr_id = ?';
 
-export const updateReadMessageSql = "update chat_message set cm_is_read=1, updated_at=CURRENT_TIMESTAMP where cm_room_id = ? and cm_receiver_id = ?";
+export const updateReadMessageSql = "update chat_message set cm_is_read=1, updated_at=CURRENT_TIMESTAMP where cm_room_id = ? and cm_is_read = 0 and cm_receiver_id = ?";
