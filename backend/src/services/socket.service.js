@@ -1,5 +1,10 @@
-import { readMessageResponseDTO, sendMessageResponseDTO } from "../dtos/socket.dto.js";
-import { addMessageDao } from "../models/chat.dao.js";
+import { connectRoomResponseDTO, readMessageResponseDTO, sendMessageResponseDTO } from "../dtos/socket.dto.js";
+
+import { addMessageDao, getChatRoomToRIdDao, readMessageDao } from "../models/socket.dao.js";
+
+export const connectRoomService = async (roomId) => {
+    return connectRoomResponseDTO(await getChatRoomToRIdDao(roomId));
+}
 
 export const sendMessageService = async (message) => {
 
@@ -8,11 +13,13 @@ export const sendMessageService = async (message) => {
     const result = await addMessageDao(roomId, senderId, receiverId, content, isMedia);
 
     return sendMessageResponseDTO(result);
-    // return readChatResponseDTO(await readChatDao());
 }
 
-export const readMessageService = async () => {
+export const readMessageService = async (info) => {
 
-    return readMessageResponseDTO("test");
-    // return readChatResponseDTO(await readChatDao());
+    const {roomId, receiverId} = info;
+
+    const result = await readMessageDao(roomId, receiverId);
+    
+    return readMessageResponseDTO(result, roomId, receiverId);
 }

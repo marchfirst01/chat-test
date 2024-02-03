@@ -4,29 +4,54 @@ export const createRoomResponseDTO = (data, status) => {
 
     return {
         "roomId": data.cr_id,
-        "roomName": data.cr_name,
-        "roomStatus": data.cr_status,
-        "buyerId": data.cr_buyer_id,
-        "sellerId": data.cr_seller_id,
-        "productId": data.cr_product_id,
-        "latestMsg": data.cr_latest_msg,
-        "latestMsgData": moment.utc(data.cr_latest_msg_date).tz("Asia/Seoul").format('YYYY-MM-DD HH:mm:ss'),
-        "createdAt": moment.utc(data.created_at).tz("Asia/Seoul").format('YYYY-MM-DD HH:mm:ss'),
         "isAlreadyExist": status
-    };
+    }
 }
 
 export const getChatResponseDTO = (data) => {
 
-    return {"null":"null"};
-}
+    const chatList = [];
 
-export const readChatResponseDTO = (data) => {
-
-    return {"null":"null"};
+    for (let i = 0; i < data.length; i++) {
+        chatList.push({
+            "roomId": data[i].cr_id,
+            "status": data[i].cr_status,
+            "buyerId": data[i].cr_buyer_id,
+            "buyerName": data[i].buyerName,
+            "buyerProfile": data[i].buyerProfile,
+            "sellerId": data[i].cr_seller_id,
+            "sellerName": data[i].sellerName,
+            "sellerProfile": data[i].sellerProfile,
+            "latestMsg": data[i].cr_latest_msg,
+            "latestMsgDate": moment.utc(data[i].cr_latest_msg_date).tz("Asia/Seoul").add(9, 'h').format('YYYY-MM-DD HH:mm:ss'),
+            "notReadCount": (data[i].notReadCount ? data[i].notReadCount : 0)
+        });
+    }
+    
+    return {
+        "chatListData": chatList,
+        "cursorId": data[data.length-1].cr_id
+    };
 }
 
 export const getChatLogResponseDTO = (data) => {
 
-    return {"null":"null"};
+    const chatLogList = [];
+
+    for (let i = 0; i < data.length; i++) {
+        chatLogList.push({
+            "msgId": data[i].cm_id,
+            "senderId": data[i].cm_sender_id,
+            "receiverId": data[i].cm_receiver_id,
+            "msg": data[i].cm_content,
+            "isRead": data[i].cm_is_read,
+            "date": moment.utc(data[i].created_at).tz("Asia/Seoul").add(9, 'h').format('YYYY-MM-DD HH:mm:ss'),
+            "isMedia": data[i].cm_is_media
+        });
+    }
+    
+    return {
+        "chatLogListData": chatLogList,
+        "cursorId": data[data.length-1].cm_id
+    };
 }

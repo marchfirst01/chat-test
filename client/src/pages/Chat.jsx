@@ -33,7 +33,7 @@ const Chat = ({ location }) => {
     setRoom(room);
     setName(name);
 
-    socket.emit("connect-room", { rid: room, uid: name }, (error) => {
+    socket.emit("connect-room", { roomId: room }, (error) => {
       if (error) {
         alert(error);
       }
@@ -42,8 +42,13 @@ const Chat = ({ location }) => {
 
   useEffect(() => {
 
+    socket.on("connect-info", (message) => {
+      console.log("ci", message);
+      setMessages((messages) => [...messages, message]);
+    });
+
     socket.on("received-message", (message) => {
-      console.log("rc", message);
+      console.log("rM", message);
       setMessages((messages) => [...messages, message]);
     });
 

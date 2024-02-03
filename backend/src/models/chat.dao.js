@@ -5,7 +5,7 @@ import { pool } from "../../config/db.connect.js";
 import { BaseError } from "../../config/error.js";
 import { status } from "../../config/response.status.js";
 
-import { addMessageSql, getChatRoomToIDsSql, getChatRoomToRIDSql, getChatRoomToUserIdSql, getMessageToIdSql, insertChatRoomSql, insertNewMessageSql, insertParticipantSql, isRoomExistSql } from "./chat.sql.js";
+import { countChatLog, countChatRoom, getChatListSql, getChatLogSql, getCreateChatRoomToIDsSql, insertChatRoomSql, isRoomExistSql } from "./chat.sql.js";
 
 // 채팅방 찾기
 export const findChatRoom = async (buyerId, sellerId, productId) => {
@@ -22,12 +22,13 @@ export const findChatRoom = async (buyerId, sellerId, productId) => {
     }
 }
 
+// createChatRoom
 // 새로운 채팅방 생성하기
-export const createChatRoomDao = async (buyerId, sellerId, productId, roomName) => {
+export const createChatRoomDao = async (buyerId, sellerId, productId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [chatRoom] = await pool.query(insertChatRoomSql, [roomName, buyerId, sellerId, productId]);
+        const [chatRoom] = await pool.query(insertChatRoomSql, [buyerId, sellerId, productId]);
         conn.release();
         return chatRoom.insertId;
 
@@ -37,12 +38,13 @@ export const createChatRoomDao = async (buyerId, sellerId, productId, roomName) 
     }
 }
 
+// createChatRoom
 // buyerId, sellerId, productId 통해 채팅방 정보 불러오기
 export const getChatRoomToIDsDao = async (buyerId, sellerId, productId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [chatRoom] = await pool.query(getChatRoomToIDsSql, [productId, sellerId, buyerId]);
+        const [chatRoom] = await pool.query(getCreateChatRoomToIDsSql, [productId, sellerId, buyerId]);
         conn.release();
 
         return chatRoom[0];
@@ -53,79 +55,42 @@ export const getChatRoomToIDsDao = async (buyerId, sellerId, productId) => {
     }
 }
 
-// roomId 통해 채팅방 정보 불러오기
-export const getChatRoomToRIdDao = async (roomId) => {
+// 채팅방 리스트
+export const getChatListDao = async (userId, paging, cursorId) => {
     try{
         const conn = await pool.getConnection();
         
-        const [chatRoom] = await pool.query(getChatRoomToRIDSql, roomId);
+        if(cursorId == -1){
+            const [temp] = await pool.query(countChatRoom);
+            cursorId = temp[0].chatRoomCursor + 1;
+        }
+
+        const [result] = await pool.query(getChatListSql, [userId, userId, userId, userId, userId, cursorId, paging]);
+        conn.release();
+
+        return result;
+
+    }catch (err) {
+        console.error(err);
+        throw new BaseError(status.PARAMETER_IS_WRONG);
+    }
+}
+
+export const getChatLogDao = async (roomId, paging, cursorId) => {
+    try{
+        const conn = await pool.getConnection();
         
+        if(cursorId == -1){
+            const [temp] = await pool.query(countChatLog);
+            cursorId = temp[0].chatLogCursor + 1;
+        }
+
+        const [result] = await pool.query(getChatLogSql, [roomId, cursorId, paging]);
         conn.release();
-        return chatRoom[0];
 
-    }catch (err) {
-        console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-}
+        console.log(result);
 
-export const addMessageDao = async (roomId, senderId, receiverId, content, isMedia) => {
-    try{
-        const conn = await pool.getConnection();
-
-        const [addMessage] = await pool.query(addMessageSql, [roomId, senderId, receiverId, content, isMedia]);
-        const [result] = await pool.query(getMessageToIdSql, addMessage.insertId);
-
-        conn.release();
-        return result[0];
-
-    }catch (err) {
-        console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-
-}
-
-
-export const addParticipantDao = async (roomId, roomName, participant) => {
-    try{
-        const conn = await pool.getConnection();
-
-        const [my] = await pool.query(insertParticipantSql, [participant[0], roomId, roomName]);
-        const [opponent] = await pool.query(insertParticipantSql, [participant[1], roomId, roomName]);
-
-        conn.release();
-        return [my.insertId, opponent.insertId];
-
-    }catch (err) {
-        console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-}
-
-export const getNewChatRoomDao = async (roomId, userId) => {
-    try{
-        const conn = await pool.getConnection();
-
-        const [result] = await pool.query(getChatRoomToUserIdSql, [roomId, userId]);
-
-        conn.release();
-        return result[0];
-
-    }catch (err) {
-        console.error(err);
-        throw new BaseError(status.PARAMETER_IS_WRONG);
-    }
-}
-
-export const addNewMessageDao = async (roomId, userId, message, not_read) => {
-    try{
-        const conn = await pool.getConnection();
-
-        const [insert] = await pool.query(insertNewMessageSql, [roomId, userId, message, not_read]);
-
-        conn.release();
-        return insert.insertId;
+        return result;
 
     }catch (err) {
         console.error(err);
