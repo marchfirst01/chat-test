@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from 'react';
-import queryString from 'query-string';
-import io from 'socket.io-client';
-import * as C from './Chat.style.js';
-import InfoBar from '../components/infoBar/InfoBar';
-import Messages from '../components/messages/Messages';
-import Input from '../components/input/Input';
-=======
 import React, { useState, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { userState, chatInfoState } from "./../recoil/recoil";
@@ -15,19 +6,12 @@ import * as C from "./Chat.style.js";
 import InfoBar from "../components/infoBar/InfoBar";
 import Messages from "../components/messages/Messages";
 import Input from "../components/input/Input";
->>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
 
-const ENDPOINT = 'http://localhost:8080/';
+const ENDPOINT = "http://localhost:8080/";
 
 let socket;
 
 const Chat = ({ location }) => {
-<<<<<<< HEAD
-  const [name, setName] = useState('');
-  const [room, setRoom] = useState('');
-  const [users, setUsers] = useState('');
-  const [message, setMessage] = useState('');
-=======
   const [chatInfo] = useRecoilState(chatInfoState);
   const [user] = useRecoilState(userState);
 
@@ -35,7 +19,6 @@ const Chat = ({ location }) => {
   const [room, setRoom] = useState("");
   const [users, setUsers] = useState("");
   const [message, setMessage] = useState("");
->>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -49,14 +32,10 @@ const Chat = ({ location }) => {
     const newRoom = chatInfo.roomId;
     const newName = user;
 
-<<<<<<< HEAD
-    socket.emit('join', { name, room }, error => {
-=======
     setRoom(newRoom);
     setName(newName);
 
     socket.emit("join", { name: newName, room: newRoom }, (error) => {
->>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
       if (error) {
         alert(error);
       }
@@ -64,23 +43,23 @@ const Chat = ({ location }) => {
   }, [ENDPOINT, window.location.search]);
 
   useEffect(() => {
-    socket.on('message', message => {
-      setMessages(messages => [...messages, message]);
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
     });
 
-    socket.on('roomData', ({ users }) => {
-      console.log('roomData', users);
+    socket.on("roomData", ({ users }) => {
+      console.log("roomData", users);
       setUsers(users);
     });
   }, []);
 
-  const sendMessage = event => {
+  const sendMessage = (event) => {
     event.preventDefault();
 
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit('sendMessage', message, () => setMessage(''));
+      socket.emit("sendMessage", message, () => setMessage(""));
     }
   };
 
