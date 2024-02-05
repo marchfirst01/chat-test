@@ -1,16 +1,14 @@
 const users = [];
 
 // This is the function that will be called when a user joins a room
-export const addUser = ({id, name, room}) => {
-  // Clean the data
-  name = name.trim().toLowerCase();
-  room = room.trim().toLowerCase();
-
+export const addUser = ({ id, name, room }) => {
   // Check for existing user
-  const existingUser = users.find((user) => user.room === room && user.name === name);
+  const existingUser = users.find(
+    (user) => user.room === room && user.name === name
+  );
 
   // Validate name and room
-  if (!name || !room) return {error: '이름과 방이 필요해요.'};
+  if (!name || !room) return { error: "이름과 방이 필요해요." };
 
   // Validate username
   if (existingUser) {
@@ -18,11 +16,11 @@ export const addUser = ({id, name, room}) => {
   }
 
   // Store user
-  const user = {id, name, room};
+  const user = { id, name, room };
   users.push(user);
 
-  return {user};
-}
+  return { user };
+};
 
 // This is the function that will be called when a user leaves a room
 export const removeUser = (id) => {
@@ -31,11 +29,11 @@ export const removeUser = (id) => {
   if (index !== -1) {
     return users.splice(index, 1)[0];
   }
-}
+};
 
 // This is the function that will be called when a user sends a message
 export const getUser = (id) => users.find((user) => user.id === id);
 
 // This is the function that will be called when a user sends a message
-export const getUsersInRoom = (room) => users.filter((user) => user.room === room);
-
+export const getUsersInRoom = (room) =>
+  users.filter((user) => user.room === room);
