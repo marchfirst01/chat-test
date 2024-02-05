@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import io from 'socket.io-client';
@@ -5,16 +6,36 @@ import * as C from './Chat.style.js';
 import InfoBar from '../components/infoBar/InfoBar';
 import Messages from '../components/messages/Messages';
 import Input from '../components/input/Input';
+=======
+import React, { useState, useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { userState, chatInfoState } from "./../recoil/recoil";
+import io from "socket.io-client";
+import * as C from "./Chat.style.js";
+import InfoBar from "../components/infoBar/InfoBar";
+import Messages from "../components/messages/Messages";
+import Input from "../components/input/Input";
+>>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
 
 const ENDPOINT = 'http://localhost:8080/';
 
 let socket;
 
 const Chat = ({ location }) => {
+<<<<<<< HEAD
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
   const [users, setUsers] = useState('');
   const [message, setMessage] = useState('');
+=======
+  const [chatInfo] = useRecoilState(chatInfoState);
+  const [user] = useRecoilState(userState);
+
+  const [name, setName] = useState("");
+  const [room, setRoom] = useState("");
+  const [users, setUsers] = useState("");
+  const [message, setMessage] = useState("");
+>>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -23,16 +44,19 @@ const Chat = ({ location }) => {
     // url에서 가져오는 방법이 아닌 다른 방법으로 name과 room을 가져오려면
     // 미리 정해진 방법으로 name과 room을 가져오는 것이 아닌
     // socket.emit('join')이 실행되기 전에 setRoom과 setName이 실행되도록 해야 한다.
-    const { name, room } = queryString.parse(window.location.search);
-
-    console.log(name, room);
-
     socket = io(ENDPOINT);
 
-    setRoom(room);
-    setName(name);
+    const newRoom = chatInfo.roomId;
+    const newName = user;
 
+<<<<<<< HEAD
     socket.emit('join', { name, room }, error => {
+=======
+    setRoom(newRoom);
+    setName(newName);
+
+    socket.emit("join", { name: newName, room: newRoom }, (error) => {
+>>>>>>> 8a510f99321848c9e9092bb5db64f8795402da9d
       if (error) {
         alert(error);
       }

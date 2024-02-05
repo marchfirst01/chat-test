@@ -1,42 +1,60 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { useRecoilState } from "recoil";
+import { chatInfoState, userState } from "./../recoil/recoil";
 
-import "./Join.css";
+const res = {
+  isSuccess: true,
+  code: 2000,
+  message: "success!",
+  result: {
+    roomId: 2,
+    roomName: "4bb7b3581490d0d09c97f006295db664",
+    roomStatus: 1,
+    buyerId: 3,
+    sellerId: 2,
+    productId: 1,
+    latestMsg: "",
+    latestMsgData: "2024-02-01 02:49:49",
+    createdAt: "2024-02-01 02:49:49",
+    isAlreadyExist: 1,
+  },
+};
 
-function Join() {
-  const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
+export default function Join() {
+  const navigate = useNavigate();
+  const [, setResResult] = useRecoilState(chatInfoState);
+  const [, setUser] = useRecoilState(userState);
+
+  setUser(Math.floor(Math.random() * 1000 + 1));
+
+  const clickButton = () => {
+    setResResult(res.result);
+    navigate(`/chat?roomID=${res.result.roomId}`);
+  };
   return (
-    <div className="joinOuterContainer">
-      <div className="joinInnerContainer">
-        <h1 className="heading">채팅</h1>
-        <div>
-          <input
-            placeholder="이름"
-            className="joinInput"
-            type="text"
-            onChange={(event) => setName(event.target.value)}
-          />
-        </div>
-        <div>
-          <input
-            placeholder="채팅방"
-            className="joinInput mt-20"
-            type="text"
-            onChange={(event) => setRoom(event.target.value)}
-          />
-        </div>
-        <Link
-          onClick={(e) => (!name || !room ? e.preventDefault() : null)}
-          to={`/chat?name=${name}&room=${room}`}
-        >
-          <button className={"button mt-20"} type="submit">
-            문의하기
-          </button>
-        </Link>
-      </div>
-    </div>
+    <Wrapper>
+      <Button onClick={clickButton}>문의하기</Button>
+    </Wrapper>
   );
 }
 
-export default Join;
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+const Button = styled.button`
+  width: 174px;
+  height: 44px;
+  border: none;
+  border-radius: 6px;
+  background: var(
+    --Gradation_dark,
+    linear-gradient(225deg, #8c4ff2 0%, #4812a3 100%)
+  );
+  color: #fff;
+  cursor: pointer;
+`;
