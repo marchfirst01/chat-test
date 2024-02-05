@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from "react";
-import queryString from "query-string";
-import io from "socket.io-client";
-import * as C from "./Chat.style.js";
-import InfoBar from "../components/infoBar/InfoBar";
-import Messages from "../components/messages/Messages";
-import Input from "../components/input/Input";
+import React, { useState, useEffect } from 'react';
+import queryString from 'query-string';
+import io from 'socket.io-client';
+import * as C from './Chat.style.js';
+import InfoBar from '../components/infoBar/InfoBar';
+import Messages from '../components/messages/Messages';
+import Input from '../components/input/Input';
 
-const ENDPOINT = "http://localhost:8080/";
+const ENDPOINT = 'http://localhost:8080/';
 
 let socket;
 
 const Chat = ({ location }) => {
-  const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
-  const [users, setUsers] = useState("");
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState('');
+  const [room, setRoom] = useState('');
+  const [users, setUsers] = useState('');
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
-
 
   useEffect(() => {
     // 여기선 name과 room을 url에서 가져온다.
@@ -33,7 +32,7 @@ const Chat = ({ location }) => {
     setRoom(room);
     setName(name);
 
-    socket.emit("connect-room", { roomId: room }, (error) => {
+    socket.emit('join', { name, room }, error => {
       if (error) {
         alert(error);
       }
@@ -41,35 +40,23 @@ const Chat = ({ location }) => {
   }, [ENDPOINT, window.location.search]);
 
   useEffect(() => {
-
-    socket.on("connect-info", (message) => {
-      console.log("ci", message);
-      setMessages((messages) => [...messages, message]);
+    socket.on('message', message => {
+      setMessages(messages => [...messages, message]);
     });
 
-    socket.on("read-message", (message) => {
-      console.log("rM", message);
-      setMessages((messages) => [...messages, message]);
-    });
-
-    socket.on("roomData", ({ users }) => {
-      console.log("roomData", users);
+    socket.on('roomData', ({ users }) => {
+      console.log('roomData', users);
       setUsers(users);
     });
-
   }, []);
 
-  const sendMessage = (event) => {
+  const sendMessage = event => {
     event.preventDefault();
 
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit("read-message", {
-        roomId: 1,
-        senderId: 1,
-        receiverId: 2,
-      }, () => setMessage(""));
+      socket.emit('sendMessage', message, () => setMessage(''));
     }
   };
 
