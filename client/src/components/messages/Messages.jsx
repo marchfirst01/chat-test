@@ -11,7 +11,7 @@ const Wrapper = styled.div`
   padding: 1rem;
 `;
 
-function Messages({ messages, name }) {
+function Messages({ messages }) {
   useEffect(() => {
     console.log(messages);
   }, [messages]);
@@ -22,7 +22,7 @@ function Messages({ messages, name }) {
         {messages.map((message, i) => {
           return (
             <div key={i}>
-              <Message message={message} name={name} />
+              <Message message={message.result} />
             </div>
           );
         })}

@@ -1,37 +1,35 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useRecoilState } from "recoil";
-import { chatInfoState, userState } from "./../recoil/recoil";
+import { postCreateRoom } from "../apis/createRoom.js";
+
+const data = {
+  buyerId: 1,
+  sellerId: 2,
+  productId: 1,
+};
 
 const res = {
-  isSuccess: true,
-  code: 2000,
-  message: "success!",
-  result: {
-    roomId: 2,
-    roomName: "4bb7b3581490d0d09c97f006295db664",
-    roomStatus: 1,
-    buyerId: 3,
-    sellerId: 2,
-    productId: 1,
-    latestMsg: "",
-    latestMsgData: "2024-02-01 02:49:49",
-    createdAt: "2024-02-01 02:49:49",
-    isAlreadyExist: 1,
-  },
+  roomId: 1,
+  isAlreadyExist: 1,
 };
 
 export default function Join() {
   const navigate = useNavigate();
-  const [, setResResult] = useRecoilState(chatInfoState);
-  const [, setUser] = useRecoilState(userState);
 
-  setUser(Math.floor(Math.random() * 1000 + 1));
-
-  const clickButton = () => {
-    setResResult(res.result);
-    navigate(`/chat?roomID=${res.result.roomId}`);
+  const clickButton = async () => {
+    try {
+      const { buyerId, sellerId, productId } = data;
+      const createRoomRes = await postCreateRoom({
+        buyerId,
+        sellerId,
+        productId,
+      });
+      console.log(createRoomRes);
+      navigate(`/chat?roomID=${res.roomId}`);
+    } catch (error) {
+      console.error("방생성 오류 발생", error);
+    }
   };
   return (
     <Wrapper>
