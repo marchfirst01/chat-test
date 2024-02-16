@@ -27,9 +27,8 @@ export default function Join() {
   const [, setResResult] = useRecoilState(chatInfoState);
   const [, setUser] = useRecoilState(userState);
 
-  setUser(Math.floor(Math.random() * 1000 + 1));
-
   const clickButton = () => {
+    setUser(Math.floor(Math.random() * 1000 + 1));
     setResResult(res.result);
     navigate(`/chat?roomID=${res.result.roomId}`);
   };
