@@ -13,6 +13,7 @@ const ENDPOINT = "https://dev.brushwork.shop/";
 let socket;
 
 const Chat = ({ location }) => {
+
   // const [chatInfo] = useRecoilState(chatInfoState);
 
   const [room] = useState("");
@@ -43,6 +44,7 @@ const Chat = ({ location }) => {
     });
 
     socket.emit("connect-room", { roomId: roomID }, (error) => {
+
       if (error) {
         alert(error);
       }
@@ -58,6 +60,7 @@ const Chat = ({ location }) => {
     });
 
     console.log(messages);
+
   }, []);
 
   const sendMessage = (event) => {
@@ -71,6 +74,7 @@ const Chat = ({ location }) => {
         { roomId: 1, senderId: 1, receiverId: 2, content: message },
         () => setMessage("")
       );
+
     }
   };
 
