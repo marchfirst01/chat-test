@@ -1,56 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { userState, chatInfoState } from "./../recoil/recoil";
+// import { useRecoilState } from "recoil";
+// import { chatInfoState } from "./../recoil/recoil";
 import io from "socket.io-client";
+import queryString from "query-string";
 import * as C from "./Chat.style.js";
 import InfoBar from "../components/infoBar/InfoBar";
 import Messages from "../components/messages/Messages";
 import Input from "../components/input/Input";
 
-const ENDPOINT = "http://localhost:8080/";
+const ENDPOINT = "https://dev.brushwork.shop/";
 
 let socket;
 
 const Chat = ({ location }) => {
-  const [chatInfo] = useRecoilState(chatInfoState);
-  const [user] = useRecoilState(userState);
 
-  const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
-  const [users, setUsers] = useState("");
+  // const [chatInfo] = useRecoilState(chatInfoState);
+
+  const [room] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
+  const res = {
+    roomId: 1,
+    roomStatus: 1,
+    buyerId: 1,
+    buyerNickname: "test1",
+    buyerProfile: "imgUrl1",
+    sellerId: 2,
+    sellerNickname: "test2",
+    sellerProfile: "imgUrl2",
+    productId: 1,
+    productName: "product1",
+    productStatus: 0,
+    productPrice: 3000,
+    productImg: "pImg1",
+  };
+
   useEffect(() => {
-    // 여기선 name과 room을 url에서 가져온다.
-    // 이유는 setRoom과 setName이 적용되기 전에 socket.emit('join')이 실행되기 때문이다.
-    // url에서 가져오는 방법이 아닌 다른 방법으로 name과 room을 가져오려면
-    // 미리 정해진 방법으로 name과 room을 가져오는 것이 아닌
-    // socket.emit('join')이 실행되기 전에 setRoom과 setName이 실행되도록 해야 한다.
-    socket = io(ENDPOINT);
+    const { roomID } = queryString.parse(window.location.search);
 
-    const newRoom = chatInfo.roomId;
-    const newName = user;
+    socket = io(ENDPOINT, {
+      withCredentials: false,
+    });
 
-    setRoom(newRoom);
-    setName(newName);
+    socket.emit("connect-room", { roomId: roomID }, (error) => {
 
-    socket.emit("join", { name: newName, room: newRoom }, (error) => {
       if (error) {
         alert(error);
       }
     });
+    socket.on("connect-info", (info) => {
+      console.log("ci", info);
+    });
   }, [ENDPOINT, window.location.search]);
 
   useEffect(() => {
-    socket.on("message", (message) => {
+    socket.on("received-message", (message) => {
       setMessages((messages) => [...messages, message]);
     });
 
-    socket.on("roomData", ({ users }) => {
-      console.log("roomData", users);
-      setUsers(users);
-    });
+    console.log(messages);
+
   }, []);
 
   const sendMessage = (event) => {
@@ -59,7 +69,12 @@ const Chat = ({ location }) => {
     if (message) {
       // console.log(message)
       // axios -> post 메시지 저장 api 요청
-      socket.emit("sendMessage", message, () => setMessage(""));
+      socket.emit(
+        "send-message",
+        { roomId: 1, senderId: 1, receiverId: 2, content: message },
+        () => setMessage("")
+      );
+
     }
   };
 
@@ -67,7 +82,7 @@ const Chat = ({ location }) => {
     <C.OuterContainer>
       <C.Container>
         <InfoBar room={room} />
-        <Messages messages={messages} name={name} />
+        <Messages messages={messages} />
         <Input
           message={message}
           setMessage={setMessage}
